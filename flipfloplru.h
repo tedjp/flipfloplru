@@ -4,7 +4,7 @@ template <typename Key, typename Value>
 class FlipFlopLRU {
 public:
     Value* Get(const Key& key);
-    void Put(const K& key, V&& element);
+    void Put(const Key& key, Value&& element);
 
 private:
     void Swap();
@@ -17,7 +17,7 @@ private:
 
 
 template <typename Key, typename Value>
-Value* FlipFlopLRU<key, Value>::Get(const Key& key) {
+Value* FlipFlopLRU<Key, Value>::Get(const Key& key) {
     auto found = active_->find(key);
     if (found != active_->end()) {
         return found->second;
@@ -25,7 +25,7 @@ Value* FlipFlopLRU<key, Value>::Get(const Key& key) {
 
     found = passive_->find(key);
     if (found == passive_->end()) {
-        return nullptr_;
+        return nullptr;
     }
     else {
         found = active_->insert(key, move(found->second));
@@ -38,17 +38,17 @@ Value* FlipFlopLRU<key, Value>::Get(const Key& key) {
 
 template <typename Key, typename Value>
 void FlipFlopLRU<Key, Value>::Put(const Key& key, Value&& value) {
-    if (max_size_ == active->size())
+    if (max_size_ == active_->size())
     {
         Swap();
         passive_->clear();
     }
 
-    active_->emplace(key, move(value));
+    active_->emplace(key, std::move(value));
 }
 
 template <typename Key, typename Value>
-void FlipFlopLRU<key, Value>::Swap() {
+void FlipFlopLRU<Key, Value>::Swap() {
     std::swap(active_, passive_);
-    passive.clear();
+    passive_->clear();
 }
