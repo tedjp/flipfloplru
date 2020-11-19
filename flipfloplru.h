@@ -26,13 +26,15 @@ Value* FlipFlopLRU<Key, Value>::Get(const Key& key) {
     if (found == passive_->end()) {
         return nullptr;
     }
-    else {
+
+    if (active_->size() == max_size_) {
+        auto elem = move(found->second);
+        Swap();
+        return &active_->emplace(key, move(elem)).first;
+    } else {
         found = active_->insert(key, move(found->second));
         return &found->second;
     }
-
-
-    return nullptr;
 }
 
 template <typename Key, typename Value>
