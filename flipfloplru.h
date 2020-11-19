@@ -15,7 +15,6 @@ private:
     size_t max_size_ = 0;
 };
 
-
 template <typename Key, typename Value>
 Value* FlipFlopLRU<Key, Value>::Get(const Key& key) {
     auto found = active_->find(key);
