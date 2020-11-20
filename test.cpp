@@ -1,5 +1,7 @@
 #include "flipfloplru.h"
 
+#include <cassert>
+
 struct Movable {
 public:
     Movable() = default;
@@ -16,6 +18,10 @@ int main(void) {
     FlipFlopLRU<int, Movable> lru(10);
 
     lru.put(1, Movable(1));
+    Movable* m = lru.get(1);
+    assert(m != nullptr);
+    m = lru.get(2);
+    assert(m == nullptr);
 
     return 0;
 }

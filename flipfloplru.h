@@ -72,22 +72,30 @@ public:
 
     Value* get(const Key& key) {
         auto found = active_->find(key);
-        if (found != active_->end())
+        if (found != active_->end()) {
+            // Found in active set
             return &found->second;
-
-        found = passive_->find(key);
-        if (found == passive_->end())
-            return nullptr;
-
-        if (active_->size() == max_size_) {
-            // Future: Use extract() to move the entire node.
-            auto elem = move(found->second);
-            flipFlop();
-            return &active_->emplace(key, move(elem)).first;
         }
 
-        found = active_->insert(key, move(found->second));
-        return &found->second;
+        found = passive_->find(key);
+        if (found == passive_->end()) {
+            // Not in active or passive
+            return nullptr;
+        }
+
+        if (active_->size() == max_size_) {
+            // Found in passive, but active is already full.
+            // Future: Use extract() to move the entire node.
+            auto elem = std::move(found->second);
+            flipFlop();
+            auto placed = active_->emplace(key, std::move(elem));
+            return &placed.first->second;
+        }
+
+        // Found in passive, move to active
+        // Future: Use extract() to move the entire node.
+        auto placed = active_->emplace(std::move(*found));
+        return &placed.first->second;
     }
 
     Value& put(const Key& key, const Value& value) {
