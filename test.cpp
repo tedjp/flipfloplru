@@ -15,13 +15,17 @@ private:
 };
 
 int main(void) {
-    FlipFlopLRU<int, Movable> lru(10);
+    FlipFlopLRU<int, Movable> lru(1);
 
     lru.put(1, Movable(1));
     Movable* m = lru.get(1);
     assert(m != nullptr);
     m = lru.get(2);
     assert(m == nullptr);
+    lru.put(2, Movable(2));
+    // Pull 1 from inactive side
+    m = lru.get(1);
+    assert(m != nullptr);
 
     return 0;
 }
