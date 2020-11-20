@@ -1,2 +1,4 @@
 # TODO
 - Accept custom allocator
+- emplace()
+- operator[]

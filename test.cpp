@@ -13,9 +13,9 @@ private:
 };
 
 int main(void) {
-    FlipFlopLRU<int, Movable> lru;
+    FlipFlopLRU<int, Movable> lru(10);
 
-    lru.Put(1, Movable(1));
+    lru.put(1, Movable(1));
 
     return 0;
 }
