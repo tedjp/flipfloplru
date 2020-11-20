@@ -20,8 +20,10 @@ public:
     explicit FlipFlopLRU(size_t max_size):
         max_size_(max_size)
     {
-        left_.reserve(max_size);
-        right_.reserve(max_size);
+        active_->reserve(max_size);
+        // Passive side doesn't allocate until the first flipFlop().
+        // This provides a smaller memory footprint when the dataset never
+        // exceeds max_size_ (ie. never flip-flops).
     }
 
     FlipFlopLRU(const FlipFlopLRU& other):
@@ -139,8 +141,12 @@ private:
         }
     }
 
-    void flipFlop() noexcept {
+    void flipFlop() {
         passive_->clear();
         std::swap(active_, passive_);
+
+        // Delayed allocation of the 2nd underlying container until the first
+        // flipFlop. This will be a no-op on subsequent flipFlops.
+        active_->reserve(max_size_);
     }
 };
