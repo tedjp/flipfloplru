@@ -24,6 +24,9 @@ int main(void) {
     // Test that reserve() clamps to actual maximum size.
     lru.reserve(std::numeric_limits<size_t>::max());
 
+    // Test accessor (return value ignored)
+    lru.maxSize();
+
     lru.put(1, Movable(1));
     Movable* m = lru.get(1);
     assert(m != nullptr);
