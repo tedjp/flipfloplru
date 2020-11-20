@@ -73,13 +73,14 @@ public:
     Value* get(const Key& key) {
         auto found = active_->find(key);
         if (found != active_->end())
-            return found->second;
+            return &found->second;
 
         found = passive_->find(key);
         if (found == passive_->end())
             return nullptr;
 
         if (active_->size() == max_size_) {
+            // Future: Use extract() to move the entire node.
             auto elem = move(found->second);
             flipFlop();
             return &active_->emplace(key, move(elem)).first;
@@ -89,11 +90,21 @@ public:
         return &found->second;
     }
 
+    Value& put(const Key& key, const Value& value) {
+        if (active_->size() >= max_size_)
+            flipFlop();
+
+        auto placed = active_->insert_or_assign(key, value);
+        return placed.first->second;
+    }
+
+    // if a duplicate exists in the passive set, it's left there harmlessly
+    // (until the next flipFlop()).
     Value& put(const Key& key, Value&& value) {
         if (active_->size() >= max_size_)
             flipFlop();
 
-        auto placed = active_->emplace(key, std::move(value));
+        auto placed = active_->insert_or_assign(key, std::move(value));
         return placed.first->second;
     }
 
