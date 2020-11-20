@@ -23,7 +23,10 @@ public:
         active_->reserve(max_size);
         // Passive side doesn't allocate until the first flipFlop().
         // This provides a smaller memory footprint when the dataset never
-        // exceeds max_size_ (ie. never flip-flops).
+        // exceeds max_size_ (ie. never flip-flops), at the cost of a delay
+        // to allocate during the first flip-flop. The delay can be avoided by
+        // calling reserve() to explicitly reserve the full amount of space in
+        // both underlying containers (active & passive).
     }
 
     FlipFlopLRU(const FlipFlopLRU& other):
@@ -118,6 +121,20 @@ public:
         return placed.first->second;
     }
 
+    // Reserve space for a full cache.
+    void reserve() {
+        reserve(max_size_);
+    }
+
+    // Reserve space for a number of elements (potentially requiring resize
+    // of the underlying containers later).
+    // If size is greater than the max_size_, only reserves the max_size_.
+    void reserve(size_t size) {
+        size = std::min(size, max_size_);
+        passive_->reserve(size);
+        active_->reserve(size);
+    }
+
     //Value& emplace(...);
 
     //Value& operator[](const Key& key);
@@ -127,6 +144,13 @@ public:
     // Returns the size of the active & passive containers
     std::pair<size_t, size_t> size() const noexcept {
         return {active_->size(), passive_->size()};
+    }
+
+    // Return the maximum number of active elements. The actual number of
+    // stored elements may be up to double due to unreleased inactive-side
+    // elements.
+    size_t maxSize() const noexcept {
+        return max_size_;
     }
 
 private:
