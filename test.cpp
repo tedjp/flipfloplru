@@ -28,6 +28,8 @@ int main(void) {
     assert(m != nullptr);
     // Replace 1
     lru.put(1, Movable(1));
+    // Replace inactive-side element
+    lru.put(2, Movable(2));
 
     return 0;
 }
