@@ -1,6 +1,7 @@
 #include "flipfloplru.h"
 
 #include <cassert>
+#include <limits>
 
 struct Movable {
 public:
@@ -16,6 +17,12 @@ private:
 
 int main(void) {
     FlipFlopLRU<int, Movable> lru(1);
+
+    // Test reserve()
+    lru.reserve();
+
+    // Test that reserve() clamps to actual maximum size.
+    lru.reserve(std::numeric_limits<size_t>::max());
 
     lru.put(1, Movable(1));
     Movable* m = lru.get(1);
