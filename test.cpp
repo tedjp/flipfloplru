@@ -31,5 +31,9 @@ int main(void) {
     // Replace inactive-side element
     lru.put(2, Movable(2));
 
+    // Move entire FlipFlopLRU
+    FlipFlopLRU<int, Movable> lru2 = std::move(lru);
+    FlipFlopLRU<int, Movable> lru3(std::move(lru2));
+
     return 0;
 }
