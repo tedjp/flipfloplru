@@ -26,6 +26,8 @@ int main(void) {
     // Pull 1 from inactive side
     m = lru.get(1);
     assert(m != nullptr);
+    // Replace 1
+    lru.put(1, Movable(1));
 
     return 0;
 }
