@@ -76,5 +76,17 @@ int main(void) {
     std::pair<size_t, size_t> empty{0u, 0u};
     assert(lru3.size() == empty);
 
+    lru3.put(3, Movable(3));
+    std::pair<size_t, size_t> oneActive{1u, 0u};
+    assert(lru3.size() == oneActive);
+
+    lru3.put(4, Movable(4));
+    std::pair<size_t, size_t> oneEach{1u, 1u};
+    assert(lru3.size() == oneEach);
+
+    lru3.erase(4);
+    std::pair<size_t, size_t> onePassive{0u, 1u};
+    assert(lru3.size() == onePassive);
+
     return 0;
 }
