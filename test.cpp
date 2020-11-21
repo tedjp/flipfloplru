@@ -70,5 +70,11 @@ int main(void) {
     FlipFlopLRU<int, Movable> lru2 = std::move(lru);
     FlipFlopLRU<int, Movable> lru3(std::move(lru2));
 
+    lru3.erase(1);
+    lru3.erase(2);
+
+    std::pair<size_t, size_t> empty{0u, 0u};
+    assert(lru3.size() == empty);
+
     return 0;
 }

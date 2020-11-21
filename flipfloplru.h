@@ -100,6 +100,13 @@ public:
             || passive_->find(key) != passive_->end();
     }
 
+    void erase(const Key& key) {
+        // could be in both if it was inserted while it was also in the
+        // passive container.
+        passive_->erase(key);
+        active_->erase(key);
+    }
+
     Value* get(const Key& key) {
         auto found = active_->find(key);
         if (found != active_->end()) {
